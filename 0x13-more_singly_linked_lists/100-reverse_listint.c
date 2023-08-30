@@ -1,59 +1,90 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include "lists.h"
+#include <stdio.h>
+
+size_t looped_listint_length(const listint_t *head);
+size_t print_listint_safe(const listint_t *head);
 
 /**
- * main - Entry point
+ * looped_listint_length - Counts the number of unique nodes
+ * in a looped listint_t linked list.
+ * @head: Pointer to the head of the listint_t to check.
  *
- * Return: Always 0
+ * Return: If the list is not looped - 0.
+ * Otherwise - the number of unique nodes in the list.
  */
-int main(void)
+size_t looped_listint_length(const listint_t *head)
 {
-	listint_t *head;
+	const listint_t *slow, *fast;
+	size_t nodes = 1;
 
-	head = NULL;
-	add_nodeint_end(&head, 0);
-	add_nodeint_end(&head, 1);
-	add_nodeint_end(&head, 2);
-	add_nodeint_end(&head, 3);
-	add_nodeint_end(&head, 4);
-	add_nodeint_end(&head, 98);
-	add_nodeint_end(&head, 402);
-	add_nodeint_end(&head, 1024);
+	if (head == NULL || head->next == NULL)
+		return (0);
 
-	printf("Original list:\n");
-	print_listint(head);
+	slow = head->next;
+	fast = head->next->next;
 
-	reverse_listint(&head);
+	while (fast)
+	{
+		if (slow == fast)
+		{
+			slow = head;
+			while (slow != fast)
+			{
+				nodes++;
+				slow = slow->next;
+				fast = fast->next;
+			}
 
-	printf("Reversed list:\n");
-	print_listint(head);
+			slow = slow->next;
+			while (slow != fast)
+			{
+				nodes++;
+				slow = slow->next;
+			}
 
-	free_listint2(&head);
+			return (nodes);
+		}
+
+		slow = slow->next;
+		fast = fast->next;
+		if (fast)
+			fast = fast->next;
+
+	}
 
 	return (0);
 }
 
 /**
- * reverse_listint - Reverses a linked list
- * @head: Pointer to a pointer to the head of the list
+ * print_listint_safe - Prints a listint_t list safely.
+ * @head: Pointer to the head of the listint_t list.
  *
- * Return: Pointer to the new head of the reversed list
+ * Return: The number of nodes in the list.
  */
-listint_t *reverse_listint(listint_t **head)
+size_t print_listint_safe(const listint_t *head)
 {
-	listint_t *prev = NULL, *current = *head, *next;
+	size_t nodes, index = 0;
 
-	while (current != NULL)
+	nodes = looped_listint_length(head);
+
+	if (nodes == 0)
 	{
-		next = current->next;
-		current->next = prev;
-		prev = current;
-		current = next;
+		for (; head != NULL; nodes++)
+		{
+			printf("[%p] %d\n", (void *)head, head->n);
+			head = head->next;
+		}
+	}
+	else
+	{
+		for (index = 0; index < nodes; index++)
+		{
+			printf("[%p] %d\n", (void *)head, head->n);
+			head = head->next;
+		}
+
+		printf("-> [%p] %d\n", (void *)head, head->n);
 	}
 
-	*head = prev;
-	return (*head);
+	return (nodes);
 }
-
