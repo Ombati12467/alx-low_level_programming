@@ -1,35 +1,17 @@
 #include "main.h"
-#include <unistd.h>
 
 /**
- * print_binary_recursive - Prints binary representation using recursion.
- * @n: The number to print in binary.
- */
-void print_binary_recursive(unsigned long int n)
-{
-	if (n == 0)
-		return;
-
-	print_binary_recursive(n >> 1);
-	_putchar((n & 1) + '0');
-}
-
-/**
- * print_binary - Prints the binary representation of an unsigned long integer.
- * @n: The number to print in binary.
+ * print_binary - Prints the binary representation of a number.
+ * @n: The unsigned long integer to be printed in binary.
+ *  Recursively shift right and print each bit
+ *  Print the least significant bit as '0' or '1'
  */
 void print_binary(unsigned long int n)
 {
-	if (n == 0)
+	if (n > 1)
 	{
-		_putchar('0');
-		return;
+		print_binary(n >> 1);
 	}
-
-	print_binary_recursive(n);
+	_putchar((n & 1) + '0');
 }
 
-int _putchar(char c)
-{
-	return (write(1, &c, 1));
-}
