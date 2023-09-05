@@ -30,7 +30,17 @@ void print_read_error(const char *filename)
  */
 void print_write_error(const char *filename)
 {
-	dprintf(STDERR_FILENO, "Error: Can't write to file %s\n", filename);
+	char *full_path = realpath(filename, NULL);
+
+	if (full_path != NULL)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", full_path);
+		free(full_path);
+	}
+	else
+	{
+		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", filename);
+	}
 	exit(99);
 }
 
